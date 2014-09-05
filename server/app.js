@@ -1,5 +1,6 @@
 "use strict";
 var express = require("express"),
+    exphbs  = require("express-handlebars"),
     http = require("http"),
     path = require("path"),
     bodyParser = require("body-parser"),
@@ -18,6 +19,9 @@ var express = require("express"),
     eApp.use(bodyParser.urlencoded({ extended: true }));
     eApp.use(multer({ dest: "./uploads/"}));
     eApp.use(express.static(path.join(__dirname, "public")));
+
+    eApp.engine("tmpl", exphbs({defaultLayout: "main", extname: "tmpl"}));
+    eApp.set("view engine", "express-handlebars");
 
     router.initialize(eApp);
 

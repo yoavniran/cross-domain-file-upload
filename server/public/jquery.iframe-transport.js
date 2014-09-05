@@ -1,4 +1,4 @@
-// This [jQuery](https://jquery.com/) plugin implements an `<iframe>`
+    // This [jQuery](https://jquery.com/) plugin implements an `<iframe>`
 // [transport](https://api.jquery.com/jQuery.ajax/#extending-ajax) so that
 // `$.ajax()` calls support the uploading of files using standard HTML file
 // input fields. This is done by switching the exchange from `XMLHttpRequest`

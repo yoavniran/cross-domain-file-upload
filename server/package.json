@@ -10,6 +10,7 @@
     "busboy": "^0.2.8",
     "errorhandler": "^1.1.1",
     "express": "^4.8.7",
+    "express-handlebars": "^1.0.3",
     "express-session": "^1.7.6",
     "method-override": "^2.1.3",
     "morgan": "^1.3.0",
