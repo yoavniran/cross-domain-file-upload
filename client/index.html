@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="jquery.js"></script>
+    <script src="postmessage.js"></script>
+
+    <style type="text/css">
+
+        #uploadState {
+            width: 60px;
+            height: 60px;
+        }
+
+        #uploadState.state-stop {
+            background-color: #808080;
+        }
+
+        #uploadState.state-progress {
+            background-color: orange;
+        }
+
+        #uploadState.state-finish {
+            background-color: green;
+        }
+
+        #uploadState.state-error {
+            background-color: darkred;
+        }
+    </style>
+</head>
+<body>
+<br/>
+
+<div id="uploadState" class="state-stop"></div>
+<br/>
+<iframe id="uploadFrame" seamless="seamless"
+        sandbox="allow-scripts allow-pointer-lock allow-same-origin allow-popups allow-forms"
+        style="width:200px; height:100px;">
+</iframe>
+
+
+<script>
+
+    $(document).ready(function () {
+
+        var frameBaseUrl = "http://uploads.server:8099";
+
+        $("#uploadFrame").attr("src", frameBaseUrl + "/upload.html");
+
+        function onInitialize(){
+            _pmComm.sendMessage("hello frame");
+        }
+
+        function onMessage (data, e) { //on message callback
+            console.log("[UPLOAD WINDOW]:: received message from frame! ", data);
+            console.log("[UPLOAD WINDOW]:: message origin - ", e.origin);
+
+            if (data.action === "upload/start") {
+                $("#uploadState").attr("class", "state-progress");
+            }
+            else if (data.action === "upload/finish") {
+                $("#uploadState").attr("class", "state-finish");
+            }
+            else if (data.action === "upload/error") {
+                $("#uploadState").attr("class", "state-error");
+            }
+        }
+
+        _pmComm.initializeWindow("uploadFrame",
+                frameBaseUrl,
+                onInitialize,
+                onMessage);
+    });
+</script>
+</body>
+</html>

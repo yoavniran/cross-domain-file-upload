@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Sending forms with pure AJAX &ndash; MDN</title>
+    <script src="jquery.js"></script>
+    <script src="jquery-ui.js"></script>
+    <script src="jquery.iframe-transport.js"></script>
+    <script src="jquery.fileupload.js"></script>
+    <script src="postmessage.js"></script>
+
+</head>
+<body>
+
+<button id="uploadBtn">Upload</button>
+<br/>
+<button id="uploadIframeBtn">Upload Iframe</button>
+
+<script>
+
+    $(function () {
+
+        var _uploadsUrl = "/uploads";
+
+        function createUploadForButton(btn, options) {
+
+            var upload = btn.data("uploader");
+
+            if (!upload) {
+
+                var name = options.name;
+                var forceIframeTransport= !!options.forceIframeTransport;
+                var url = options.url ||_uploadsUrl;
+
+                upload = $("<input type=\"file\"  data-url=\""+ url +"\" name=\"" + name + "\" style=\"display:none;\"/>")
+                        .fileupload({
+                            dataType: "json",
+                            forceIframeTransport: forceIframeTransport,
+                            headers:{
+                                "lp-upload-test-header" : "this is a test header value"
+                            },
+                            done: function (e, data) {
+                                console.log("[UPLOAD FRAME]:: sent file result for: '" + name +"'" , data);
+                                _pmComm.sendMessage({"action": "upload/finish", "result": data.result});
+                            },
+                            start: function () {
+                                console.log("[UPLOAD FRAME]:: start triggered by file upload: '" + name + "'");
+                                _pmComm.sendMessage({"action": "upload/start"});
+                            }
+                        });
+
+                $("body").append(upload);
+
+                btn.data("uploader", upload);
+            }
+
+            return upload;
+        }
+
+        $("#uploadBtn").click(function () {
+            var upload = createUploadForButton($(this), {name: "upload"});
+            upload.trigger("click");
+        });
+
+        $("#uploadIframeBtn").click(function(){
+            var upload = createUploadForButton($(this), {name: "upload-iframe", forceIframeTransport: true});
+            upload.trigger("click");
+        });
+
+        function onMessage(data, e){
+
+            if (data.action) {
+                console.log("[UPLOAD FRAME]:: action - " + data.action);
+
+                if (data.action === "upload") {
+                    var upload = document.getElementById("fileupload");
+
+                    var type = data.type;
+
+                    upload.setAttribute("data-url", _uploadsUrl + ((type === "error") ? "?error=true" : ""));
+
+                    console.log("[UPLOAD FRAME]:: set upload url to: " + upload.getAttribute("data-url"));
+
+                    upload.click();
+                }
+            }
+        }
+
+        _pmComm.initializeFrame(onMessage);
+    });
+</script>
+</body>
+</html>
