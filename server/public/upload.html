@@ -9,6 +9,18 @@
     <script src="jquery.fileupload.js"></script>
     <script src="postmessage.js"></script>
 
+    <script>
+
+        function addEvent(elm, evnt, fn) { //need this for IE 8
+            if (elm.addEventListener) {  // W3C DOM
+                elm.addEventListener(evnt, fn, false);
+            }
+            else if (elm.attachEvent) { // IE DOM
+                elm.attachEvent("on"+evnt, fn);
+            }
+        }
+
+    </script>
 </head>
 <body>
 

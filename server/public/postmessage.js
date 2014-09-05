@@ -36,10 +36,15 @@ window._pmComm = (function (root) {
 
         _frameWindow = root.parent;
 
-        root.addEventListener("message", function(e){
+        addEvent(root, "message",  function(e){
             console.log("[POST-MESSAGE]:: received message from parent ", e);
             _msgHandler(e, msgHandler);
-        }, false)
+        });
+
+//        root.addEventListener("message", function(e){
+//            console.log("[POST-MESSAGE]:: received message from parent ", e);
+//            _msgHandler(e, msgHandler);
+//        }, false)
     }
 
     function initializeWindow(frameId, target, callback, msgHandler) {
@@ -48,14 +53,15 @@ window._pmComm = (function (root) {
 
         _frame = document.getElementById(frameId);
 
-        _frame.addEventListener("load", function () {
+//        _frame.addEventListener("load", function () {
+        addEvent(_frame, "load", function(){
             console.log("[POST-MESSAGE]:: frame loaded!");
-
             _frameWindow = _frame.contentWindow;
             callback();
         });
 
-        root.addEventListener("message", function (e) {
+        //root.addEventListener("message", function (e) {
+        addEvent(root, "message", function(e){
             console.log("[POST-MESSAGE]:: received message from frame ", e);
             _msgHandler(e, msgHandler);
         });
