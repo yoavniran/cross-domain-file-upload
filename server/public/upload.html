@@ -21,20 +21,23 @@
 
         var _uploadsUrl = "/uploads";
 
+        function createUploadForIE(){
+            createUploadForButton(null, {forceIframeTransport: true, visible: true});
+        }
+
         function createUploadForButton(btn, options) {
 
-            var upload = btn.data("uploader");
+            var upload = btn ?  btn.data("uploader") : void 0;
 
             if (!upload) {
 
                 var name = options.name;
-                var forceIframeTransport= !!options.forceIframeTransport;
                 var url = options.url ||_uploadsUrl;
 
-                upload = $("<input type=\"file\"  data-url=\""+ url +"\" name=\"" + name + "\" style=\"display:none;\"/>")
+                upload = $("<input type=\"file\"  data-url=\""+ url +"\" name=\"" + name + "\" style=\"" + options.visible ? "" : "display:none;" + "\"/>")
                         .fileupload({
                             dataType: "json",
-                            forceIframeTransport: forceIframeTransport,
+                            forceIframeTransport: !!options.forceIframeTransport,
                             headers:{
                                 "lp-upload-test-header" : "this is a test header value"
                             },
@@ -50,7 +53,9 @@
 
                 $("body").append(upload);
 
-                btn.data("uploader", upload);
+                if (btn) {
+                    btn.data("uploader", upload);
+                }
             }
 
             return upload;
@@ -84,6 +89,8 @@
                 }
             }
         }
+
+        createUploadForIE();
 
         _pmComm.initializeFrame(onMessage);
     });

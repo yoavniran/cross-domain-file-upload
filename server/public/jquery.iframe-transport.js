@@ -1,4 +1,4 @@
-    // This [jQuery](https://jquery.com/) plugin implements an `<iframe>`
+// This [jQuery](https://jquery.com/) plugin implements an `<iframe>`
 // [transport](https://api.jquery.com/jQuery.ajax/#extending-ajax) so that
 // `$.ajax()` calls support the uploading of files using standard HTML file
 // input fields. This is done by switching the exchange from `XMLHttpRequest`
@@ -136,7 +136,7 @@
 
         if (files.length) {
             form = $("<form enctype='multipart/form-data' encoding='multipart/form-data' method='post'></form>").
-                hide().attr({action: options.originalURL, target: name});
+                hide().attr({action: options.originalURL + "?test=foo", target: name});
 
             // If there is any additional data specified via the `data` option,
             // we add it as hidden fields to the form. This (currently) requires
@@ -211,12 +211,12 @@
                                 status = textarea && textarea.getAttribute("data-status") || 200,
                                 statusText = textarea && textarea.getAttribute("data-statusText") || "OK";
 
-                                var content = {
-                                    html: root.innerHTML,
-                                    text: type ?
-                                        textarea.value :
-                                        root ? (root.textContent || root.innerText) : null
-                                };
+                            var content = {
+                                html: root.innerHTML,
+                                text: type ?
+                                    textarea.value :
+                                    root ? (root.textContent || root.innerText) : null
+                            };
 
                             cleanUp();
 
@@ -226,8 +226,20 @@
                         });
 
                         console.log("[IFRAME-SUPPORT]:: about to submit form with request to: " + form[0].action);
+
                         // Now that the load handler has been set up, submit the form.
-                        form[0].submit();
+                        setTimeout(function(){
+                            try{
+                                form[0].submit();
+                            }
+                            catch(e){
+                                console.log("[IFRAME-SUPPORT]:: failed to submit once, trying one more time");
+                                setTimeout(function(){
+                                    form[0].submit();
+                                },0)
+                            }
+                        },0)
+
                     });
 
                     // After everything has been set up correctly, the form and iframe
