@@ -109,7 +109,6 @@
             iframe = null,
             name = "iframe-" + $.now(),
             files = $(options.files).filter(":file:enabled"),
-            markers = null,
             accepts = null;
 
         // This function gets called after a successful submission or an abortion
@@ -136,7 +135,7 @@
         options.data = origOptions.data;
 
         if (files.length) {
-            form = $("<form enctype='multipart/form-data' method='post'></form>").
+            form = $("<form enctype='multipart/form-data' encoding='multipart/form-data' method='post'></form>").
                 hide().attr({action: options.originalURL, target: name});
 
             // If there is any additional data specified via the `data` option,
@@ -177,12 +176,13 @@
             // original locations in the document by replacing them with disabled
             // clones. This should also avoid introducing unwanted changes to the
             // page layout during submission.
-            markers = files.after(function(idx) {
+            files.after(function(idx) {
                 var $this = $(this),
                     $clone = $this.clone().prop("disabled", true);
                 $this.data("clone", $clone);
                 return $clone;
             }).next();
+
             files.appendTo(form);
 
             return {
@@ -190,9 +190,8 @@
                 // The `send` function is called by jQuery when the request should be
                 // sent.
                 send: function(headers, completeCallback) {
-//                 var   iframe = $("<iframe src='javascript:false;' name='" + name +
-                    var iframe = $("<iframe src='about:blank' name='" + name +
-                        "' id='" + name + "' style='display:none'></iframe>");
+
+                    iframe = $("<iframe src='javascript:void 0;' name='" + name + "' id='" + name + "' style='display:none'></iframe>");
 
                     // The first load event gets fired after the iframe has been injected
                     // into the DOM, and is used to prepare the actual submission.

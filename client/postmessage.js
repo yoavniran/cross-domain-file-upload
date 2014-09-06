@@ -1,5 +1,16 @@
 "use strict";
 
+if (!window.addEvent) {
+    window.addEvent = function (elm, evnt, fn) { //need this for IE 8
+        if (elm.addEventListener) {  // W3C DOM
+            elm.addEventListener(evnt, fn, false);
+        }
+        else if (elm.attachEvent) { // IE DOM
+            elm.attachEvent("on" + evnt, fn);
+        }
+    }
+}
+
 window._pmComm = (function (root) {
 
     var _frame, _frameWindow, _target;
@@ -40,11 +51,6 @@ window._pmComm = (function (root) {
             console.log("[POST-MESSAGE]:: received message from parent ", e);
             _msgHandler(e, msgHandler);
         });
-
-//        root.addEventListener("message", function(e){
-//            console.log("[POST-MESSAGE]:: received message from parent ", e);
-//            _msgHandler(e, msgHandler);
-//        }, false)
     }
 
     function initializeWindow(frameId, target, callback, msgHandler) {
@@ -53,14 +59,12 @@ window._pmComm = (function (root) {
 
         _frame = document.getElementById(frameId);
 
-//        _frame.addEventListener("load", function () {
         addEvent(_frame, "load", function(){
             console.log("[POST-MESSAGE]:: frame loaded!");
             _frameWindow = _frame.contentWindow;
             callback();
         });
 
-        //root.addEventListener("message", function (e) {
         addEvent(root, "message", function(e){
             console.log("[POST-MESSAGE]:: received message from frame ", e);
             _msgHandler(e, msgHandler);
